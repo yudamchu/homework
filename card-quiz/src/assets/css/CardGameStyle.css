@@ -1,0 +1,61 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: rgb(253, 249, 249);
+}
+
+.container{
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+    margin-top: 100px;
+    
+}
+
+.content{
+    width: 700px;
+    height: 300px;
+     border: 1px solid gray;
+    border-radius: 10px;
+    padding: 50px;
+    background-color: white;
+}
+
+.board{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+    gap: 10px;
+    background-color: white;
+}
+
+.btn-box{
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+    gap: 10px
+}
+button{
+    width: 100px;
+    height: 50px;
+    border-radius: 10px;
+    border: none;
+    background-color: rgb(52, 134, 242);
+    color: white;
+}
+
+button:hover{
+    background-color: rgba(52, 134, 242, 0.722);
+}
+
+button:disabled {
+  background-color: lightgray;  /* 원하는 색상으로 바꿔줘 */
+  color: gray;
+  cursor: not-allowed;
+}
