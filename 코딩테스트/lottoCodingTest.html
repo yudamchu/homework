@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+    function solution(lottos, win_nums) {
+    
+    const result = [];
+    
+    //당첨 번호와 일치하는 로또번호 배열로 추출
+    const matchNum = win_nums.filter(x => lottos.includes(x));
+    
+    //로또 번호에서 지워진 번오(0) 추출
+    const willNum = lottos.filter(x => x === 0);
+    
+    //당첨가능한 최고 순위(0이 모두 당첨되었다고 고려)
+    if(matchNum.length + willNum.length === 6){
+        result.push(1);
+    }else if(matchNum.length + willNum.length === 5){
+        result.push(2);
+    }else if(matchNum.length + willNum.length === 4){
+        result.push(3);
+    }else if(matchNum.length + willNum.length === 3){
+        result.push(4);
+    }else if(matchNum.length + willNum.length === 2){
+        result.push(5);
+    }else{
+        result.push(6);
+    }
+    
+    
+    //당첨가능한 최저 순위 (현재 당첨된 값만 당첨되었다고 고려)
+    if(matchNum.length === 6){
+        result.push(1);
+    }else if(matchNum.length === 5){
+        result.push(2);
+    }else if(matchNum.length === 4){
+        result.push(3);
+    }else if(matchNum.length === 3){
+        result.push(4);
+    }else if(matchNum.length === 2){
+        result.push(5);
+    }else{
+        result.push(6);
+    }
+    
+    
+    
+    
+    return result;
+}
+</script>
+</html>
