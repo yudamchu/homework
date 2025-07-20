@@ -1,0 +1,104 @@
+/* 전체 영역 기본 설정 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  background-color: #f5f5f5;
+  display: flex;
+  justify-content: center;   
+  align-items: center;      
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;  /* 안의 요소 왼쪽 정렬 */
+  padding: 40px;
+  border: 1px solid black;
+  width: 600px;
+  height: 700px;
+  border-radius: 20px;
+  gap: 20px;
+  background-color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 전체 정보 영역 */
+.total-info {
+  width: 100%;
+  display: flex;
+  gap: 30px;
+  font-size: 16px;
+}
+
+/* 입력창 영역 */
+.input-box {
+  display: flex;
+  gap: 10px;
+  width: 500px;
+}
+
+.input-box input {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 8px;
+  flex: 1;
+}
+
+button {
+  padding: 8px 12px;
+  background-color: #3f51b5;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #303f9f;
+}
+
+.todolist-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.todolist-container div {
+  width: 100%;
+  height: 50px;
+  background-color: #efebeb;
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+/* 완료된 항목 */
+.todolist-container div.disabled {
+  text-decoration: line-through;
+  color: gray;
+}
+
+/* 개별 버튼 */
+.todolist-container button {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.todolist-container button:disabled {
+  background-color: #ddd;
+  cursor: not-allowed;
+}
