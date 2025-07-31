@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+    function solution(fees, records) {
+
+    //시각 차량번호 내역을 이차 배열로 만들기
+    const doubleArr = [];
+    
+    for(let i =0; i<records.length; i++){
+       doubleArr.push(records[i].split(" "));
+    }
+    
+    //차량번호에 따라 정렬 
+    doubleArr.sort((a,b) => a[1]-b[1]);
+    
+    //차량번호를 key로 정의
+    const map = {};
+    
+    for(let i = 0; i<doubleArr.length; i++){
+        const key = doubleArr[i][1];
+        
+        if(!map[key]){
+            map[key] = []; //만약 key 없다면 초기화
+        }
+        
+        map[key].push(doubleArr[i]); //차량 번호가 같은 내역 같은 key에 배열로 저장 (이차배열)
+    }
+    
+    
+   //시각을 분으로 바꾸기
+    const keys = Object.keys(map); // map의 key들을 배열에 넣기
+    
+ 
+   //출차내역을 기준으로 합 구하기 (in끼리의 합, out)
+   
+    //const inAndOut = [];//[입차시간 합산, 출차시간 합산]을 담을 배열
+    
+    const timeSum = []; //차량 번호를 index0으로 두고 inAndOut을 담을 배열
+    
+     
+    for(let i = 0; i < keys.length; i++){
+         
+        //구조분해할당으로 시각을 분 단위로 변경
+        map[keys[i]] = map[keys[i]].map(([time, car, status]) => {
+                    const [h, m] = time.split(':').map(Number);
+                    return[h*60 +m, car, status];
+                 });
+        
+     
+        
+        //key값의 길이가 짝수이면 출차 내역이 있다
+        if(map[keys[i]].length%2 === 0){
+        
+           const inAndOut = []; //[in합, out합]담을 배열
+            
+            inAndOut.push(keys[i]);
+            
+            //In끼리 합
+           const inArr = map[keys[i]].filter(x => x[2] === 'IN');
+                inArr.length === 1?
+                    inAndOut.push(inArr[0][0]) 
+                    :  
+                    inAndOut.push(inArr.reduce((a,b) => a + b[0], 0));
+            //Out끼리 합
+            const outArr = map[keys[i]].filter(x => x[2] === 'OUT');
+                outArr.length === 1?
+                    inAndOut.push(outArr[0][0]) 
+                    :  
+                    inAndOut.push(outArr.reduce((a,b) => a + b[0], 0));
+              timeSum.push(inAndOut); 
+                
+        }else{
+                
+            const inAndOut = [];//[in합, out합]담을 배열
+             
+             inAndOut.push(keys[i])
+            //In끼리 합
+            const inArr = map[keys[i]].filter(x => x[2] === 'IN');
+                inArr.length === 1?
+                    inAndOut.push(inArr[0][0]) 
+                    :  
+                    inAndOut.push(inArr.reduce((a,b) => a + b[0], 0));
+            //Out끼리 합
+            const outArr = map[keys[i]].filter(x => x[2] === 'OUT');
+                outArr.length === 0? 
+                    inAndOut.push(1439)
+                    :
+                    outArr.length === 1?
+                        inAndOut.push(outArr[0][0] + 1439) 
+                        : 
+                        inAndOut.push (outArr.reduce((a,b) => a + b[0], 0)+1439) 
+             
+            timeSum.push(inAndOut); 
+                
+            }
+      
+             
+      }
+    
+    const answer = []; //정답을 담을 배열
+    
+    timeSum.sort((a,b) => a[0]-b[0]); //차량번호 작은 순으로 정렬
+         
+    for(let i=0; i<timeSum.length; i++){
+        
+        let parkingTime = timeSum[i][2]-timeSum[i][1] // 누적주차시간
+        
+        //누적주차시간이 기본시간보다 작을 경우 기본요금
+        if (parkingTime <= fees[0]){
+            
+            answer.push(fees[1]); 
+           
+            
+        }else{
+            
+         //기본 시간 초과일 경우
+          let calc = fees[1] + Math.ceil((parkingTime - fees[0])/fees[2])*fees[3];
+          answer.push(calc);
+        }
+    }
+    
+    return answer;
+
+    
+   
+}
+</script>
+</html>
