@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+    function solution(k, m, score) {
+    
+    //나올 수 있는 상자의 갯수 구하기
+    let boxQunt = Math.floor(score.length/m);
+    
+    
+    //최대이익을 낼 수 있도록 score를 정렬
+     score.sort((a,b) => a-b);
+    
+    //높은 점수 부터 m만큼 배열에 담기
+    const boxs = [];
+    let boxCount = 0;
+    while(boxCount < boxQunt){
+        const box = score.splice(-m);
+        boxs.push(box);
+        boxCount++;
+    }
+    
+    //최저점수 구하기
+    const answer = boxs.map(x => Math.min(...x)*m)
+    
+    //합구하기 
+    return answer.reduce((a,b) => a+b,0);
+}
+</script>
+</html>
