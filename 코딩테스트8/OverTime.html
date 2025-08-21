@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+    function solution(n, works) {
+    
+    //예외처리 works 합이 n보다 작으면 0리턴
+   const workSum = works.reduce((a,b) => a+b, 0);
+     
+   if(workSum <=n){
+       return 0;
+   }
+
+  //내림차순 정렬해서 가장 큰수가 index 0;
+   works.sort((a,b) => b-a);
+   let i = 0; 
+    
+   while(n > 0){
+       //가장 처음에 오는 수가 가장 클때
+       if(i < works.length-1 && works[i] > works [i+1]){
+           works[i]--;
+           n--;
+           i=0;
+          
+        //배열 마지막 i의 값이 가장 클때
+        //다시 인덱스 0부터 시작
+       }else if(i === works.length-1){
+           works[i]--;
+           n--;
+           i=0;
+         
+         //모두 아닐 경우 i증가
+       }else{ 
+           i++;
+       }      
+   
+    /*works.sort((a,b) => a-b);
+    if(works[0] > 0){
+        works[0]--;
+        n--;
+        }*/
+       //
+    }
+  
+    return works.reduce((a,b) => a+b*b,0);
+    
+}
+</script>
+</html>
