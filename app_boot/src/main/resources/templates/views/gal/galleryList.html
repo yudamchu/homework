@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main_layout}" >
+
+<div layout:fragment="content">
+  <section class="content">
+    <section class="container">
+      <header class="text-center">
+        <h2>이미지 갤러리</h2>
+      </header>
+
+      <!-- 리스트 영역 -->
+      <section class="row imgboard" id="galleryCanvas"></section>
+
+      <!-- 버튼 영역 -->
+      <section class="row" style="margin-top: 15px;">
+        <div class="col-12" style="text-align: right;">
+          <button type="button" class="btn btn-primary" onclick="$('#gallModal').modal('show');">글 등록</button>
+          <button type="button" class="btn btn-danger" onclick="deleteSelected();">글 삭제</button>
+        </div>
+      </section>
+    </section>
+  </section>
+
+  <!-- 등록 모달 -->
+  <div class="modal fade" tabindex="-1" id="gallModal" aria-labelledby="gallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="gallModalLabel">갤러리 등록</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="gallFrm">
+            <div class="mb-3">
+              <label for="title" class="form-label">제목</label>
+              <input type="text" class="form-control" id="title" name="title">
+            </div>
+            <div class="mb-3">
+              <label for="file" class="form-label">파일</label>
+              <input type="file" class="form-control" id="file" name="file">
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" onclick="saveGallery();">저장</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 상세 모달 -->
+  <div th:replace="views/gal/galleryDetail :: detailModal"></div>
+
+  <!-- 수정 모달 -->
+  <div th:replace="views/gal/galleryUpdateForm :: updateModal"></div>
+
+  <script>
+    // ========================= 리스트 =========================
+    function getData() {
+      axios.get('/api/v1/gal').then(res => {
+        drawGalleryPage(res.data);
+      });
+    }
+
+    function drawGalleryPage(data) {
+      const galleryCanvas = $('#galleryCanvas');
+      galleryCanvas.empty();
+
+      $.each(data.content, (index, obj) => {
+        const html = makeGalleryBox(obj);
+        galleryCanvas.append(html);
+      });
+    }
+
+    function makeGalleryBox(data) {
+      return $(`
+        <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+          <input type="checkbox" name="imgChk" value="${data.nums}">
+          <div class="img-box" onclick="openDetailModal('${data.nums}')">
+            <img src="/static/imgs/thumb/${data.fileThumbName}" alt="${data.title}" class="thumbnail">
+          </div>
+          <span style="font-size: 20px;">${data.title}</span>
+          <span> | ${data.lastModifiedDate}</span>
+        </div>
+      `);
+    }
+
+    // ========================= 등록 =========================
+    async function saveGallery() {
+      const gallFrm = $('#gallFrm');
+      const formData = new FormData(gallFrm[0]);
+
+      try {
+        const resp = await axios.post('/api/v1/gal', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        if (resp.data.resultCode === 200) {
+          alert('이미지가 등록되었습니다.');
+          $('#gallModal').modal('hide'); // 모달 닫기
+          getData(); // 리스트 새로고침
+        } else {
+          alert('이미지 등록 실패');
+        }
+      } catch (error) {
+        alert("에러 발생: " + error);
+      }
+    }
+
+    // ========================= 상세 =========================
+    function openDetailModal(nums) {
+      $("#galleryDetailModal").modal("show");
+      axios.get(`/api/v1/gal/${nums}`).then(res => {
+        const vo = res.data.vo;
+        $("#galleryDetailModal #nums").val(vo.nums);
+        $("#galleryDetailModal img").attr("src", `/static/imgs/${vo.storedName}`);
+        $("#galleryDetailModal h3").text(vo.title);
+        $("#galleryDetailModal p").text("작성자: " + vo.writer);
+      });
+    }
+
+    // ========================= 수정 =========================
+    function openUpdateModal(nums) {
+      $("#galleryDetailModal").modal("hide");
+      $("#galleryUpdateModal").modal("show");
+
+      axios.get(`/api/v1/gal/${nums}`).then(res => {
+        const vo = res.data.vo;
+        $("#updateFrm #nums").val(vo.nums);
+        $("#updateFrm #title").val(vo.title);
+        $("#updateFrm #contents").val(vo.contents || "");
+        if (vo.fileName) {
+          $("#fileArea").html(`${vo.fileName} <a href="javascript:void(0);" onclick="delFile('${vo.nums}');"><i class="fa-regular fa-circle-xmark"></i></a>`);
+        } else {
+          $("#fileArea").text("첨부 없음");
+        }
+      });
+    }
+
+    async function updateGallery() {
+      const form = document.getElementById("updateFrm");
+      const formData = new FormData(form);
+      try {
+        const resp = await axios.put("/api/v1/gal", formData);
+        if (resp.data.resultCode === 200) {
+          alert("수정되었습니다.");
+          $("#galleryUpdateModal").modal("hide");
+          getData();
+        } else {
+          alert("수정 실패");
+        }
+      } catch (err) {
+        alert("에러 발생: " + err);
+      }
+    }
+
+    
+
+    // ========================= 글 삭제 =========================
+    function deleteSelected() {
+      const checked = $("input[name='imgChk']:checked");
+      if (checked.length === 0) {
+        alert("삭제할 항목을 선택하세요.");
+        return;
+      }
+
+      if (!confirm(`${checked.length}개의 이미지를 삭제하시겠습니까?`)) return;
+
+      const numsList = checked.map(function() { return this.value; }).get();
+
+      Promise.all(numsList.map(nums =>
+        axios.delete(`/api/v1/gal/${nums}`)
+      ))
+      .then(() => {
+        alert("삭제되었습니다.");
+        getData();
+      })
+      .catch(err => {
+        console.error(err);
+        alert("삭제 중 오류가 발생했습니다.");
+      });
+    }
+
+    // ========================= 초기 로딩 =========================
+    $(document).ready(() => {
+      getData();
+    });
+  </script>
+</div>
+</html>

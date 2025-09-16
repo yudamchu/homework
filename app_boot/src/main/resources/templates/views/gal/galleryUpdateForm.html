@@ -1,0 +1,34 @@
+<th:block th:fragment="updateModal">
+<div class="modal fade" id="galleryUpdateModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">갤러리 수정</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="updateFrm">
+          <input type="hidden" id="nums" name="nums">
+          <div class="mb-3">
+            <label for="title">제목</label>
+            <input type="text" class="form-control" id="title" name="title">
+          </div>
+          <div class="mb-3">
+            <label for="file">이미지 변경 (선택)</label>
+            <input type="file" class="form-control" id="file" name="file">
+          </div>
+          <div id="fileArea">첨부 없음</div>
+          <div class="mb-3">
+            <label for="contents">내용</label>
+            <textarea class="form-control" id="contents" name="contents"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" onclick="updateGallery();">저장</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+      </div>
+    </div>
+  </div>
+</div>
+</th:block>
